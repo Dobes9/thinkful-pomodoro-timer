@@ -2,14 +2,11 @@ import React from "react";
 import classNames from "../utils/class-names";
 
 function PlayPauseStopButtons({
-  playPause,
-  isTimerRunning,
-  setActiveSession,
-  setIsTimerRunning,
-  activeSession,
   initialTimerSettings,
   setTimerSettings,
+  timerSettings,
 }) {
+  const { isTimerRunning, activeSession } = timerSettings;
   return (
     <div className="row">
       <div className="col">
@@ -24,8 +21,12 @@ function PlayPauseStopButtons({
             data-testid="play-pause"
             title="Start or pause timer"
             onClick={() => {
-              setActiveSession(true);
-              playPause;
+              // when clicked, toggle isTimerRunning (play/pause) and set activeSession to true
+              setTimerSettings({
+                ...timerSettings,
+                isTimerRunning: !isTimerRunning,
+                activeSession: true,
+              });
             }}
           >
             <span
@@ -36,15 +37,13 @@ function PlayPauseStopButtons({
               })}
             />
           </button>
-          {/* TODO: Implement stopping the current focus or break session and disable when there is no active session */}
           <button
             type="button"
             className="btn btn-secondary"
             title="Stop the session"
             disabled={!activeSession}
             onClick={() => {
-              setActiveSession(false);
-              setIsTimerRunning(false);
+              // when clicked, reset all values in state to initial values. Will set activeSession to false, and isTimerRunning to false
               setTimerSettings({ ...initialTimerSettings });
             }}
           >

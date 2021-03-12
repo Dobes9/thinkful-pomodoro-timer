@@ -1,23 +1,28 @@
 import React from "react";
 import { minutesToDuration } from "../utils/duration";
 
-function TimerDurations({ timerSettings, activeSession, setTimerSettings }) {
-  const { focusDuration, breakDuration } = timerSettings;
+function TimerDurations({ timerSettings, setTimerSettings }) {
+  const {
+    focusDuration,
+    breakDuration,
+    focusInSeconds,
+    breakInSeconds,
+    activeSession,
+  } = timerSettings;
   return (
     <div className="row">
       <div className="col">
         <div className="input-group input-group-lg mb-2">
           <span className="input-group-text" data-testid="duration-focus">
-            {/* TODO: Update this text to display the current focus session duration */}
-            Focus Duration: {minutesToDuration(timerSettings.focusDuration)}
+            Focus Duration: {minutesToDuration(focusDuration)}
           </span>
           <div className="input-group-append">
-            {/* TODO: Implement decreasing focus duration and disable during a focus or break session */}
             <button
               type="button"
               className="btn btn-secondary"
               data-testid="decrease-focus"
-              value={timerSettings.focusDuration}
+              // when clicked, this button will decrease focus time by 5 minutes
+              // minimum focus time is 5:00
               onClick={() => {
                 setTimerSettings({
                   ...timerSettings,
@@ -25,19 +30,22 @@ function TimerDurations({ timerSettings, activeSession, setTimerSettings }) {
                     Math.max(parseInt(focusDuration - 5), 5),
                     60
                   ),
+                  focusInSeconds: Math.min(
+                    Math.max(parseInt(focusInSeconds - 300), 300),
+                    3600
+                  ),
                 });
               }}
               disabled={activeSession}
             >
-              -
               <span className="oi oi-minus" />
             </button>
-            {/* TODO: Implement increasing focus duration  and disable during a focus or break session */}
             <button
               type="button"
               className="btn btn-secondary"
               data-testid="increase-focus"
-              value={timerSettings.focusDuration}
+              // when clicked, this button will increase focus time by 5 minutes
+              // maximum focus time is 60:00
               onClick={() => {
                 setTimerSettings({
                   ...timerSettings,
@@ -45,11 +53,14 @@ function TimerDurations({ timerSettings, activeSession, setTimerSettings }) {
                     Math.max(parseInt(focusDuration + 5), 5),
                     60
                   ),
+                  focusInSeconds: Math.min(
+                    Math.max(parseInt(focusInSeconds + 300), 300),
+                    3600
+                  ),
                 });
               }}
               disabled={activeSession}
             >
-              +
               <span className="oi oi-plus" />
             </button>
           </div>
@@ -59,15 +70,15 @@ function TimerDurations({ timerSettings, activeSession, setTimerSettings }) {
         <div className="float-right">
           <div className="input-group input-group-lg mb-2">
             <span className="input-group-text" data-testid="duration-break">
-              {/* TODO: Update this text to display the current break session duration */}
-              Break Duration: {minutesToDuration(timerSettings.breakDuration)}
+              Break Duration: {minutesToDuration(breakDuration)}
             </span>
             <div className="input-group-append">
-              {/* TODO: Implement decreasing break duration and disable during a focus or break session*/}
               <button
                 type="button"
                 className="btn btn-secondary"
                 data-testid="decrease-break"
+                // when clicked, this button will decrease break time by 1 minute
+                // minimum break time is 1:00
                 onClick={() => {
                   setTimerSettings({
                     ...timerSettings,
@@ -75,18 +86,22 @@ function TimerDurations({ timerSettings, activeSession, setTimerSettings }) {
                       Math.max(parseInt(breakDuration - 1), 1),
                       15
                     ),
+                    breakInSeconds: Math.min(
+                      Math.max(parseInt(breakInSeconds - 60), 60),
+                      900
+                    ),
                   });
                 }}
                 disabled={activeSession}
               >
-                -
                 <span className="oi oi-minus" />
               </button>
-              {/* TODO: Implement increasing break duration and disable during a focus or break session*/}
               <button
                 type="button"
                 className="btn btn-secondary"
                 data-testid="increase-break"
+                // when clicked, this button will increase break time by 1 minute
+                // maximum break time is 15:00
                 onClick={() => {
                   setTimerSettings({
                     ...timerSettings,
@@ -94,11 +109,14 @@ function TimerDurations({ timerSettings, activeSession, setTimerSettings }) {
                       Math.max(parseInt(breakDuration + 1), 1),
                       15
                     ),
+                    breakInSeconds: Math.min(
+                      Math.max(parseInt(breakInSeconds + 60), 60),
+                      900
+                    ),
                   });
                 }}
                 disabled={activeSession}
               >
-                +
                 <span className="oi oi-plus" />
               </button>
             </div>

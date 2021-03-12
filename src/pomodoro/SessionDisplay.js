@@ -1,24 +1,45 @@
 import React from "react";
 import { secondsToDuration, minutesToDuration } from "../utils/duration";
 
-function SessionDisplay({ activeSession, isTimerRunning, timerSettings }) {
+function SessionDisplay({ timerSettings }) {
+  const {
+    isTimerRunning,
+    activeSession,
+    focusDuration,
+    breakDuration,
+    focusInSeconds,
+    breakInSeconds,
+    onBreak,
+  } = timerSettings;
+  // valueNow determines the percentage of the session that has been completed, and updates as the timer runs
+  const valueNow = !onBreak
+    ? ((focusDuration * 60 - focusInSeconds) / (focusDuration * 60)) * 100
+    : ((breakDuration * 60 - breakInSeconds) / (breakDuration * 60)) * 100;
   return (
+    // this div only renders if activeSession is true
     activeSession && (
       <div>
-        {/* TODO: This area should show only when a focus or break session is running or pauses */}
         <div className="row mb-2">
           <div className="col">
-            {/* TODO: Update message below to include current session (Focusing or On Break) and total duration */}
-            {!timerSettings.onBreak ? (
-                <h2 data-testid="session-title">Focusing for {minutesToDuration(timerSettings.focusDuration)} minutes</h2>
+            {!onBreak ? (
+              <h2 data-testid="session-title">
+                Focusing for {minutesToDuration(focusDuration)} minutes
+              </h2>
             ) : (
-                <h2 data-testid="session-title">On Break for {minutesToDuration(timerSettings.breakDuration)} minutes</h2>
+              <h2 data-testid="session-title">
+                On Break for {minutesToDuration(breakDuration)} minutes
+              </h2>
             )}
-            
-            {/* TODO: Update message below to include time remaining in the current session */}
-            <p className="lead" data-testid="session-sub-title">
-              25:00 remaining
-            </p>
+            {!onBreak ? (
+              <p className="lead" data-testid="session-sub-title">
+                {secondsToDuration(focusInSeconds)} remaining
+              </p>
+            ) : (
+              <p className="lead" data-testid="session-sub-title">
+                {secondsToDuration(breakInSeconds)} remaining
+              </p>
+            )}
+            {/* PAUSED only displays when the timer is paused */}
             {isTimerRunning ? null : <h2>PAUSED</h2>}
           </div>
         </div>
@@ -30,8 +51,8 @@ function SessionDisplay({ activeSession, isTimerRunning, timerSettings }) {
                 role="progressbar"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                aria-valuenow="0" // TODO: Increase aria-valuenow as elapsed time increases
-                style={{ width: "0%" }} // TODO: Increase width % as elapsed time increases
+                aria-valuenow={valueNow}
+                style={{ width: `${valueNow}%` }}
               />
             </div>
           </div>
